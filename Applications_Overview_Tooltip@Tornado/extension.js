@@ -10,6 +10,7 @@ const TOOLTIP_HOVER_TIMEOUT = 300;
 const ALWAYS_SHOW_TOOLTIP = true;
 // should the description of the app be displayed under the name (true/false)
 const SHOW_APP_DESCRIPTION = true;
+
 /*** end of setting - do not change anything from here below ***/
 
 const Main = imports.ui.main;
@@ -36,6 +37,8 @@ function enable() {
     _tooltips = new Array();
     // Enabling tooltips after _appIcons has been populated
     let appIcons = Main.overview.viewSelector.appDisplay._views[1].view._items;
+    //global.log("appIcons after enable",appIcons, Object.keys(appIcons).length);
+    global.log("appIcons after enable",Object.getOwnPropertyNames(appIcons));
     for (let i in appIcons) {
         _connect(appIcons[i].actor);
     }
@@ -59,7 +62,6 @@ function disable() {
 }
 
 function _onHover(actor){
-    // global.log("Testig onHover"); // working
     if (actor.get_hover()) {
         if (_labelTimeoutId == 0) {
             let timeout = _labelShowing ? 0 : TOOLTIP_HOVER_TIMEOUT;
