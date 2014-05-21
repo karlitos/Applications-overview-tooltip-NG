@@ -19,3 +19,5 @@ I also added stylesheet.css where you can change the appearance of the tooltip-l
 * The tooltips do not work on anythin beside the application overview. I will try to implement the functionality also for dash.
 
 Everyting ist still work-in-progress because I am a gnome-extension-noob.
+
+![Alt text](./screenshot.png "Here is how it looks like")
