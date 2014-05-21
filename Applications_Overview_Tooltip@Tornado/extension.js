@@ -38,14 +38,13 @@ function enable() {
     // Enabling tooltips after _appIcons has been populated
     let appIcons = Main.overview.viewSelector.appDisplay._views[1].view._items;
     //global.log("appIcons after enable",appIcons, Object.keys(appIcons).length);
-    global.log("appIcons after enable",Object.getOwnPropertyNames(appIcons));
     for (let i in appIcons) {
         _connect(appIcons[i].actor);
     }
     // monkeypatching for the load time and for the search overview tooltips
     _old_addItem = imports.ui.iconGrid.IconGrid.prototype.addItem;
-    imports.ui.iconGrid.IconGrid.prototype.addItem = function(actor){
-        _connect(actor);
+    imports.ui.iconGrid.IconGrid.prototype.addItem = function(item, index){
+        _connect(item.actor);
         // original part of the function I'm overwriting
         _old_addItem.apply(this, arguments);
     };
