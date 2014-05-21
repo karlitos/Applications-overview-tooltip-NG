@@ -25,7 +25,7 @@ function init() {}
 function enable() {
     _tooltips = new Array();
     // Enabling tooltips after _appIcons has been populated
-    let appIcons = Main.overview._viewSelector._appDisplay._views[1].view._items;
+    let appIcons = Main.overview.viewSelector.appDisplay._views[1].view._items;
     for (let i in appIcons) {
         _connect(appIcons[i].actor);
     }
