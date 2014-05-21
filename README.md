@@ -13,6 +13,10 @@ This behavior and the timing can be changed in the first few lines of theextensi
 
 I also added stylesheet.css where you can change the appearance of the tooltip-labels with css-styling.
 
+## Instalation:
+
+Copy the Applications_Overview_Tooltip@Tornado folder to ~/.local/share/gnome-shell/extensions or to /usr/share//gnome-shell/extensions for all users. For system-wide installation check owner and permissions.
+
 ## Known bugs:
 
 * The extension does not start automaticaly after reboot. You have to go to overview, start twek-tool and disable-enable the extension. Then it works. Working on it.
