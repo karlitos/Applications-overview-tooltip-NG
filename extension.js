@@ -1,11 +1,21 @@
+/*** *** Settings *** ***/
+
+// how fast the tooltip should be displayed
+const TOOLTIP_LABEL_SHOW_TIME = 0.15;
+// how fast the tooltip should be hideed
+const TOOLTIP_LABEL_HIDE_TIME = 0.1;
+// how long the mouse-cursor have to stay over the icon before the tooltip is displayed (in ms)
+const TOOLTIP_HOVER_TIMEOUT = 300;
+// should the tooltip be displayed even if the text is not cut-off/elipsized (true/false)
+const ALWAYS_SHOW_TOOLTIP = true;
+// should the description of the app be displayed under the name (true/false)
+const SHOW_APP_DESCRIPTION = true;
+/*** end of setting - do not change anything from here below ***/
+
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
-
-const TOOLTIP_LABEL_SHOW_TIME = 0.15;
-const TOOLTIP_LABEL_HIDE_TIME = 0.1;
-const TOOLTIP_HOVER_TIMEOUT = 300;
 
 // used to restore monkey patched function on disable
 let _old_addItem = null;
@@ -49,6 +59,7 @@ function disable() {
 }
 
 function _onHover(actor){
+    // global.log("Testig onHover"); // working
     if (actor.get_hover()) {
         if (_labelTimeoutId == 0) {
             let timeout = _labelShowing ? 0 : TOOLTIP_HOVER_TIMEOUT;
@@ -87,7 +98,20 @@ function _showTooltip(actor) {
     if (actor._delegate.app){
         //applications overview
         icontext = actor._delegate.app.get_name();
-        should_display = actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
+        if (SHOW_APP_DESCRIPTION) {
+          let appDescription = actor._delegate.app.get_description();
+          // allow only valid description-text (not null)
+          if (appDescription){
+            icontext = icontext.concat(" :\n",appDescription);
+          }
+        }
+        if (!ALWAYS_SHOW_TOOLTIP){
+          // will be displayed if elipsized/text cut-off (is_ellipsized)
+          should_display = actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
+        } else {
+          // show always
+          should_display = true;
+        }
     }else if (actor._delegate._content._delegate){
         //app and settings searchs results
         icontext = actor._delegate.metaInfo['name'];
@@ -104,7 +128,7 @@ function _showTooltip(actor) {
 
     if (!_label) {
         _label = new St.Label({
-            style_class: 'tooltip dash-label',
+            style_class: 'app-tooltip',//'tooltip dash-label',
             text: icontext
         });
         Main.uiGroup.add_actor(_label);
