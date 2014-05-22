@@ -19,7 +19,7 @@ Copy the Applications_Overview_Tooltip@Tornado folder to ~/.local/share/gnome-sh
 
 ## Known bugs:
 
-* The extension does not start automaticaly after reboot. You have to go to overview, start twek-tool and disable-enable the extension. Then it works. Working on it.
+*  <s>The extension does not start automaticaly after reboot. You have to go to overview, start twek-tool and disable-enable the extension. Then it works.</s> Fixed thanks to Raphaël Rochet.
 * The tooltips do not work on anythin beside the application overview. I will try to implement the functionality also for dash.
 
 Everyting ist still work-in-progress because I am a gnome-extension-noob.
