@@ -1,15 +1,15 @@
 /*** *** Settings *** ***/
 
 // how fast the tooltip should be displayed
-const TOOLTIP_LABEL_SHOW_TIME = 0.15;
+//const TOOLTIP_LABEL_SHOW_TIME = 0.15;
 // how fast the tooltip should be hideed
-const TOOLTIP_LABEL_HIDE_TIME = 0.1;
+//const TOOLTIP_LABEL_HIDE_TIME = 0.1;
 // how long the mouse-cursor have to stay over the icon before the tooltip is displayed (in ms)
-const TOOLTIP_HOVER_TIMEOUT = 300;
+//const TOOLTIP_HOVER_TIMEOUT;// = 300;
 // should the tooltip be displayed even if the text is not cut-off/elipsized (true/false)
-const ALWAYS_SHOW_TOOLTIP = true;
+//const ALWAYS_SHOW_TOOLTIP = true;
 // should the description of the app be displayed under the name (true/false)
-const SHOW_APP_DESCRIPTION = true;
+//const SHOW_APP_DESCRIPTION = true;
 
 /*** end of setting - do not change anything from here below ***/
 
@@ -17,6 +17,11 @@ const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
+const Gio = imports.gi.Gio
+const ExtensionUtils = imports.misc.extensionUtils;
+
+// get current extension
+const extension = imports.misc.extensionUtils.getCurrentExtension();
 
 // used to restore monkey patched function on disable
 let _old_addItem = null;
@@ -31,7 +36,36 @@ let _label = null;
 // self explainatory
 let _labelShowing = false;
 
-function init() {}
+let TOOLTIP_LABEL_SHOW_TIME;
+let TOOLTIP_LABEL_HIDE_TIME;
+let TOOLTIP_HOVER_TIMEOUT;
+let ALWAYS_SHOW_TOOLTIP;
+let SHOW_APP_DESCRIPTION;
+
+// stores settings from the schema
+let settings;
+function init() {
+  const GioSSS = Gio.SettingsSchemaSource;
+
+    let schemaSource = GioSSS.new_from_directory(extension.path + "/schemas",
+            GioSSS.get_default(), false);
+
+    let schemaObj = schemaSource.lookup(extension.metadata["settings-schema"], true);
+    if(!schemaObj) {
+        throw new Error("Schema " + extension.metadata["settings-schema"] + " could not be found for extension " +
+                        extension.uuid + ". Please check your installation.");
+    }
+
+    settings = new Gio.Settings({ settings_schema: schemaObj });
+    TOOLTIP_LABEL_SHOW_TIME = (settings.get_int("label-show-time")/100);
+    TOOLTIP_LABEL_HIDE_TIME = (settings.get_int("label-hide-time")/100);
+    TOOLTIP_HOVER_TIMEOUT = settings.get_int("hoover-timeout");
+    ALWAYS_SHOW_TOOLTIP = settings.get_boolean("allways-show-tooltips");
+    SHOW_APP_DESCRIPTION = settings.get_boolean("show-app-description");
+}
+
+//let test = settings.get_int('icon-opacity-blur');
+//const TOOLTIP_HOVER_TIMEOUT = settings.get_int("hoover-timeout");
 
 function enable() {
     _tooltips = new Array();
