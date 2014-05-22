@@ -1,27 +1,20 @@
-gs-ext-applications-overview-tooltip
+Applications-overview-tooltip-NG
 ====================================
 
 Gnome shell extension. Shows a tooltip over applications icons on applications overview.
 
-All credits goes to the original author https://github.com/fbianconi.
+All credits for the initial functionality goes to the original author Franco Bianconi.
 
-I just updated his extension, so it is compatible with Gnome-shell 3.10 and 3.12 and added some new features and settings. Those changes could break the functionality in gnome-shell <= 3.8 !!! I was not able to test it.
+I updated his extension, so it is compatible with Gnome-shell 3.10 and 3.12, which makes it incompatible gnome-shell <= 3.8. I also added some new features and settings, which can be adjusted with preferences-dialog. For this reason i decided to fork the extension and call it "new generation". Users of Gnome <= 3.8 shall use the version from extensions.gnome.org or https://github.com/fbianconi.
 
-By default the extension shows now also the application-description in the tooltip-label if provided. The description is the one from the .desktop file of the application. The tooltips are always displayed, even if the text under the icon in the app.overview is not cut-off/elipsized.
+By default the extension shows now also the application-description in the tooltip-label if provided. The description is the one from the .desktop file of the application. The tooltips are always displayed, even if the text under the icon in the app-overview is not cut-off/elipsized.
 
-This behavior and the timing can be changed in the first few lines of theextension.js file between /\*\*\* \*\*\* Settings \*\*\* \*\*\*/ and /\*\*\* end of setting - do not change anything from here below \*\*\*/.
-
-I also added stylesheet.css where you can change the appearance of the tooltip-labels with css-styling.
-
-## Instalation:
-
-Copy the Applications_Overview_Tooltip@Tornado folder to ~/.local/share/gnome-shell/extensions or to /usr/share//gnome-shell/extensions for all users. For system-wide installation check owner and permissions.
+Those settings and some other can be adjuset in preferences dialog in the gnome-tweakutility.
 
 ## Known bugs:
 
-* The extension does not start automaticaly after reboot. You have to go to overview, start twek-tool and disable-enable the extension. Then it works. Working on it.
 * The tooltips do not work on anythin beside the application overview. I will try to implement the functionality also for dash.
 
-Everyting ist still work-in-progress because I am a gnome-extension-noob.
+The extension can behave buggy and the code is probably not the cleanest one, I am still a gnome-extension-noob.
 
 ![Alt text](./screenshot.png "Here is how it looks like")
