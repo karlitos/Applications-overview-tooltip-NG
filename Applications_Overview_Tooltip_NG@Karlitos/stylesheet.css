@@ -6,4 +6,5 @@
     background-color: rgba(10,10,10,0.6);
     border-radius: 5px;
     padding: 5px;
+    max-width: 350px;
 }

@@ -4,6 +4,7 @@ const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
 const Gio = imports.gi.Gio
 const ExtensionUtils = imports.misc.extensionUtils;
+const Pango = imports.gi.Pango;
 
 // get current extension
 const extension = imports.misc.extensionUtils.getCurrentExtension();
@@ -169,6 +170,10 @@ function _showTooltip(actor) {
   }else{
     _label.text = icontext;
   }
+
+  _label.clutter_text.line_wrap = true;
+  _label.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
+  _label.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
 
   [stageX, stageY] = actor.get_transformed_position();
   [iconWidth, iconHeight] = actor.get_transformed_size();
