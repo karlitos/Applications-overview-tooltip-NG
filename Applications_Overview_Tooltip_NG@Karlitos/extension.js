@@ -116,7 +116,7 @@ function _showTooltip(actor) {
       let appDescription = actor._delegate.app.get_description();
       // allow only valid description-text (not null)
       if (appDescription){
-        icontext = icontext.concat(" :\n",appDescription);
+        icontext = icontext.concat(" :\n", appDescription);
       }
     }
     if (!_get_always_show_tooltip()){
@@ -162,15 +162,14 @@ function _showTooltip(actor) {
   }
 
   if (!_label) {
-    _label = new St.Label({
-      style_class: 'app-tooltip',//'tooltip dash-label',
-      text: icontext
-    });
+    _label = new St.Label({text: icontext});
     Main.uiGroup.add_actor(_label);
   }else{
     _label.text = icontext;
   }
 
+  // (inline) styling
+  _label.style = 'font-size: ' + 14 + 'px; max-width:' + 500 + 'px; font-weight: bold; color: ' + '#ffffff' +'; text-align: center; background-color: ' + 'rgba(10,10,10,0.6)' + '; border-radius: 5px; padding: 5px;';
   _label.clutter_text.line_wrap = true;
   _label.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
   _label.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
