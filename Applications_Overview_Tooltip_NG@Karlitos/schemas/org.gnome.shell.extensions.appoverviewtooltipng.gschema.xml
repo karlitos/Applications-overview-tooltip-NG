@@ -26,5 +26,15 @@
       <summary>Display also app description.</summary>
       <description>Shall the description of the app be displayed under the name (true/false)</description>
     </key>
+    <key type="i" name="font-size">
+      <default>12</default>
+      <summary>Set tooltip font size.</summary>
+      <description>How big (in px) the font size of the toltip should be.</description>
+    </key>
+    <key type="i" name="max-width">
+      <default>500</default>
+      <summary>Set tooltip maximial width.</summary>
+      <description>How wide (in px) the tooltip text can be before the is gets wrapped.</description>
+    </key>
   </schema>
 </schemalist>

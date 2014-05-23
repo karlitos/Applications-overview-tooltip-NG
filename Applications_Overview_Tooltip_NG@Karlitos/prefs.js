@@ -42,6 +42,8 @@ function buildPrefsWidget() {
   frame.add(buildSpinn("label-hide-time", [0, 150, 1, 10], "Determines how fast the tooltip should be dismissed."));
   frame.add(buildSwitcher("allways-show-tooltips", "Always show tooltips (even if the icon-label is not elipsized)."));
   frame.add(buildSwitcher("show-app-description", "Display also app description in the tooltip."));
+  frame.add(buildSpinn("font-size", [5, 20, 1, 10], "Determines the font-size (in px)of the tooltip text"));
+  frame.add(buildSpinn("max-width", [50, 2000, 1, 10], "How wide (in px) the tooltip text can be before the is gets wrapped."));
 
   frame.show_all();
 

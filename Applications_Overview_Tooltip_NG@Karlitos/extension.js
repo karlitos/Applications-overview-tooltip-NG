@@ -44,6 +44,8 @@ function _get_tooltip_label_hide_time() { return (_settings.get_int("label-hide-
 function _get_tooltip_hover_timeout() { return (_settings.get_int("hoover-timeout")); }
 function _get_always_show_tooltip() { return (_settings.get_boolean("allways-show-tooltips")); }
 function _get_show_app_description() { return (_settings.get_boolean("show-app-description")); }
+function _get_tooltip_text_font_size() { return (_settings.get_int("font-size")); }
+function _get_tooltip_text_max_width() { return (_settings.get_int("max-width")); }
   
   
 function enable() {
@@ -169,7 +171,7 @@ function _showTooltip(actor) {
   }
 
   // (inline) styling
-  _label.style = 'font-size: ' + 14 + 'px; max-width:' + 500 + 'px; font-weight: bold; color: ' + '#ffffff' +'; text-align: center; background-color: ' + 'rgba(10,10,10,0.6)' + '; border-radius: 5px; padding: 5px;';
+  _label.style = 'font-size: ' + _get_tooltip_text_font_size() + 'px; max-width:' + _get_tooltip_text_max_width() + 'px; font-weight: bold; color: ' + '#ffffff' +'; text-align: center; background-color: ' + 'rgba(10,10,10,0.6)' + '; border-radius: 5px; padding: 5px;';
   _label.clutter_text.line_wrap = true;
   _label.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
   _label.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
