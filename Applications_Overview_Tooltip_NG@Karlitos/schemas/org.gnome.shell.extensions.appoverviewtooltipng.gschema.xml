@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="/org/gnome/shell/extensions/appoverviewtooltipng/" id="org.gnome.shell.extensions.appoverviewtooltipng">
+    <key type="i" name="hoover-timeout">
+        <default>300</default>
+        <summary>Set timeout before tooltip shows.</summary>
+        <description>How long the mouse-cursor have to stay over the icon before the tooltip is displayed (in ms).</description>
+    </key>
+    <key type="i" name="label-show-time">
+        <default>15</default>
+        <summary>Set fade-in tooltip duration.</summary>
+        <description>Determines how fast the tooltip should be displayed.</description>
+    </key>
+     <key type="i" name="label-hide-time">
+        <default>10</default>
+        <summary>Set fade-out toltip duration.</summary>
+        <description>Determines how fast the tooltip should be dismissed.</description>
+    </key>
+    <key name="allways-show-tooltips" type="b">
+            <default>true</default>
+            <summary>Always show tooltips.</summary>
+            <description>Shall the tooltip be displayed even if the text is not cut-off/elipsized.</description>
+    </key>
+    <key name="show-app-description" type="b">
+      <default>true</default>
+      <summary>Display also app description.</summary>
+      <description>Shall the description of the app be displayed under the name (true/false)</description>
+    </key>
+  </schema>
+</schemalist>
