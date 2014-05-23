@@ -1,18 +1,3 @@
-/*** *** Settings *** ***/
-
-// how fast the tooltip should be displayed
-//const TOOLTIP_LABEL_SHOW_TIME = 0.15;
-// how fast the tooltip should be hideed
-//const TOOLTIP_LABEL_HIDE_TIME = 0.1;
-// how long the mouse-cursor have to stay over the icon before the tooltip is displayed (in ms)
-//const TOOLTIP_HOVER_TIMEOUT;// = 300;
-// should the tooltip be displayed even if the text is not cut-off/elipsized (true/false)
-//const ALWAYS_SHOW_TOOLTIP = true;
-// should the description of the app be displayed under the name (true/false)
-//const SHOW_APP_DESCRIPTION = true;
-
-/*** end of setting - do not change anything from here below ***/
-
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const St = imports.gi.St;
@@ -36,14 +21,8 @@ let _label = null;
 // self explainatory
 let _labelShowing = false;
 
-let TOOLTIP_LABEL_SHOW_TIME;
-let TOOLTIP_LABEL_HIDE_TIME;
-let TOOLTIP_HOVER_TIMEOUT;
-let ALWAYS_SHOW_TOOLTIP;
-let SHOW_APP_DESCRIPTION;
-
 // stores settings from the schema
-let settings;
+let _settings;
 function init() {
   const GioSSS = Gio.SettingsSchemaSource;
 
@@ -56,17 +35,16 @@ function init() {
                     extension.uuid + ". Please check your installation.");
   }
 
-  settings = new Gio.Settings({ settings_schema: schemaObj });
-  TOOLTIP_LABEL_SHOW_TIME = (settings.get_int("label-show-time")/100);
-  TOOLTIP_LABEL_HIDE_TIME = (settings.get_int("label-hide-time")/100);
-  TOOLTIP_HOVER_TIMEOUT = settings.get_int("hoover-timeout");
-  ALWAYS_SHOW_TOOLTIP = settings.get_boolean("allways-show-tooltips");
-  SHOW_APP_DESCRIPTION = settings.get_boolean("show-app-description");
+  _settings = new Gio.Settings({ settings_schema: schemaObj });
 }
 
-//let test = settings.get_int('icon-opacity-blur');
-//const TOOLTIP_HOVER_TIMEOUT = settings.get_int("hoover-timeout");
-
+function _get_tooltip_label_show_time() { return (_settings.get_int("label-show-time")/100); }
+function _get_tooltip_label_hide_time() { return (_settings.get_int("label-hide-time")/100); }
+function _get_tooltip_hover_timeout() { return (_settings.get_int("hoover-timeout")); }
+function _get_always_show_tooltip() { return (_settings.get_boolean("allways-show-tooltips")); }
+function _get_show_app_description() { return (_settings.get_boolean("show-app-description")); }
+  
+  
 function enable() {
   _tooltips = new Array();
   // Enabling tooltips after _appIcons has been populated
@@ -97,7 +75,7 @@ function disable() {
 function _onHover(actor){
   if (actor.get_hover()) {
     if (_labelTimeoutId == 0) {
-      let timeout = _labelShowing ? 0 : TOOLTIP_HOVER_TIMEOUT;
+      let timeout = _labelShowing ? 0 : _get_tooltip_hover_timeout();
       _labelTimeoutId = Mainloop.timeout_add(timeout,
                                              function() {
                                                _labelShowing = true;
@@ -117,7 +95,7 @@ function _onHover(actor){
     _labelTimeoutId = 0;
     _hideTooltip();
     if (_labelShowing) {
-      _resetHoverTimeoutId = Mainloop.timeout_add(TOOLTIP_HOVER_TIMEOUT,
+      _resetHoverTimeoutId = Mainloop.timeout_add(_get_tooltip_hover_timeout(),
                                                   function() {
                                                     _labelShowing = false;
                                                     return false;
@@ -133,14 +111,14 @@ function _showTooltip(actor) {
   if (actor._delegate.app){
     //applications overview
     icontext = actor._delegate.app.get_name();
-    if (SHOW_APP_DESCRIPTION) {
+    if (_get_show_app_description()) {
       let appDescription = actor._delegate.app.get_description();
       // allow only valid description-text (not null)
       if (appDescription){
         icontext = icontext.concat(" :\n",appDescription);
       }
     }
-    if (!ALWAYS_SHOW_TOOLTIP){
+    if (!_get_always_show_tooltip()){
       // will be displayed if elipsized/text cut-off (is_ellipsized)
       should_display = actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
     } else {
@@ -159,7 +137,7 @@ function _showTooltip(actor) {
   else if (actor._delegate.hasOwnProperty('_folder')){
     // folder in the application overview
     icontext = 'Group: '.concat(actor._delegate['name']);
-    if (!ALWAYS_SHOW_TOOLTIP){
+    if (!_get_always_show_tooltip()){
       // will be displayed if elipsized/text cut-off (is_ellipsized)
       should_display = actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
     } else {
@@ -169,7 +147,7 @@ function _showTooltip(actor) {
   }else{
     //app and settings searchs results
     icontext = actor._delegate.metaInfo['name'];
-    if (!ALWAYS_SHOW_TOOLTIP){
+    if (!_get_always_show_tooltip()){
       // will be displayed if elipsized/text cut-off (is_ellipsized)
       should_display = actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
     } else {
@@ -201,7 +179,7 @@ function _showTooltip(actor) {
   _label.set_position(x, y);
   Tweener.addTween(_label,{
     opacity: 255,
-    time: TOOLTIP_LABEL_SHOW_TIME,
+    time: _get_tooltip_label_show_time(),
     transition: 'easeOutQuad',
   });
 }
@@ -210,7 +188,7 @@ function _hideTooltip() {
   if (_label){
     Tweener.addTween(_label, {
       opacity: 0,
-      time: TOOLTIP_LABEL_HIDE_TIME,
+      time: _get_tooltip_label_hide_time(),
       transition: 'easeOutQuad',
       onComplete: function() {
         Main.uiGroup.remove_actor(_label);
