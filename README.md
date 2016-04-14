@@ -4,8 +4,8 @@ Applications overview tooltip
 Gnome shell extension. Shows a tooltip over applications icons on applications overview.
 
 Credits :
-2012,2013 Original author Franco Bianconi.
-2014 Updated and upgraded by Karel Macha
+- 2012,2013 Original author Franco Bianconi
+- 2014 Updated and upgraded by Karel Macha
 
 By default the extension shows the application-description in the tooltip-label if provided. The description is the one from the .desktop file of the application. The tooltips are always displayed, even if the text under the icon in the app-overview is not cut-off/elipsized.
 
