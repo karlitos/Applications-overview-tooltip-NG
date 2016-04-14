@@ -1,13 +1,11 @@
 {
-  "description": "Shows a tooltip over applications icons on applications overview with complete application name and description.\n Forked from the original extension Applications Overview Tooltip https://github.com/fbianconi/gs-ext-applications-overview-tooltip by Franco Bianconi. Will probably not work on Gnome <= 3.8.",
-  "name": "Applications Overview Tooltip NG",
+  "description": "Shows a tooltip over applications icons on applications overview with complete application name and description.\nForked from karlitos' work",
+  "name": "Applications Overview Tooltip",
   "shell-version": [
-    "3.10",
-    "3.12",
-    "3.14"
+    "3.20"
   ],
-  "settings-schema": "org.gnome.shell.extensions.appoverviewtooltipng",
-  "url": "https://github.com/karlitos/Applications-overview-tooltip-NG",
-  "uuid": "Applications_Overview_Tooltip_NG@Karlitos",
+  "settings-schema": "org.gnome.shell.extensions.appoverviewtooltip",
+  "url": "https://github.com/RaphaelRochet/applications-overview-tooltip",
+  "uuid": "applications-overview-tooltip@RaphaelRochet",
   "version": 1
 }

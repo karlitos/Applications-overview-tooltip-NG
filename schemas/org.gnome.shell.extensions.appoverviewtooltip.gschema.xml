@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema path="/org/gnome/shell/extensions/appoverviewtooltipng/" id="org.gnome.shell.extensions.appoverviewtooltipng">
+  <schema path="/org/gnome/shell/extensions/appoverviewtooltip/" id="org.gnome.shell.extensions.appoverviewtooltip">
     <key type="i" name="hoover-timeout">
         <default>300</default>
         <summary>Set timeout before tooltip shows.</summary>
