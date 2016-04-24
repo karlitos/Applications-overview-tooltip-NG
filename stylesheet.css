@@ -1,10 +1,19 @@
 .app-tooltip {
-    font-size: 14px;
-    font-weight: bold;
     color: #ffffff;
-    text-align: center;
     background-color: rgba(10,10,10,0.6);
     border-radius: 5px;
     padding: 5px;
-    max-width: 350px;
+    max-width: 300px;
+}
+
+.app-tooltip-title {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.app-tooltip-detail {
+    font-size: 12px;
+    font-weight: normal;
+    text-align: center;
 }

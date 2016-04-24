@@ -25,7 +25,9 @@ let _old_addItem = null;		// used to restore monkey patched function on disable
 let _tooltips = null;			// used to disconnect events on disable
 let _labelTimeoutId = 0;		// id of timer waiting for start
 let _resetHoverTimeoutId = 0;	// id of last (cancellable) timer
-let _label = null;				// actor for displaying the tooltip (or null)
+let _ttbox = null;				// actor for displaying the tooltip
+let _ttlabel = null;			// tooltip label
+let _ttdetail = null;			// tooltip description label
 let _labelShowing = false;		// self explainatory
 
 let _settings;
@@ -153,6 +155,7 @@ function _onLeave() {
 function _showTooltip(actor) {
 
 	let icontext = '';
+	let detailtext = '';
 	let should_display = false;
 
 	if (actor._delegate.app){
@@ -162,7 +165,7 @@ function _showTooltip(actor) {
 		if (APPDESCRIPTION) {
 			let appDescription = actor._delegate.app.get_description();
 			if (appDescription){
-				icontext = icontext + " :\n" + appDescription;
+				detailtext = appDescription;
 			}
 		}
 
@@ -172,8 +175,7 @@ function _showTooltip(actor) {
 		icontext = actor._delegate['name'];
 		if (GROUPAPPCOUNT) {
 			let appCount = actor._delegate.view.getAllItems().length;
-			icontext = icontext + " :\n"
-				+ Gettext.ngettext( "Group of %d application", "Group of %d applications", appCount ).format(appCount);
+			detailtext = Gettext.ngettext( "Group of %d application", "Group of %d applications", appCount ).format(appCount);
 		}
 
 	} else {
@@ -186,26 +188,38 @@ function _showTooltip(actor) {
 	if ( icontext && ( ALWAYSSHOW || actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized() ) ){
 
 		// Create a new tooltip if needed
-		if (!_label) {
-			_label = new St.Label({ style_class: 'app-tooltip', text: icontext });
-			Main.uiGroup.add_actor(_label);
+		if (!_ttbox) {
+			_ttbox = new St.BoxLayout({ vertical: true, style_class: 'app-tooltip' });
+			_ttlabel = new St.Label({ style_class: 'app-tooltip-title', text: icontext });
+			_ttdetail = new St.Label({ style_class: 'app-tooltip-detail', text: detailtext });
+			_ttbox.add_child(_ttlabel);
+			_ttbox.add_child(_ttdetail);
+			
+			// we force text wrap on both labels
+			_ttlabel.clutter_text.line_wrap = true;
+			_ttlabel.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
+			_ttlabel.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+			_ttdetail.clutter_text.line_wrap = true;
+			_ttdetail.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
+			_ttdetail.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+
+			Main.uiGroup.add_actor(_ttbox);
 		} else {
-			_label.text = icontext;
+			_ttlabel.text = icontext;
+			_ttdetail.text = detailtext;
 		}
 
-		_label.clutter_text.line_wrap = true;
-		_label.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
-		_label.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+		if (!detailtext) _ttdetail.hide();
 
 		[stageX, stageY] = actor.get_transformed_position();
 		[iconWidth, iconHeight] = actor.get_transformed_size();
 		let y = stageY + iconHeight + 5;
-		let x = stageX - Math.round((_label.get_width() - iconWidth)/2);
+		let x = stageX - Math.round((_ttbox.get_width() - iconWidth)/2);
 
 		// do not show label move if not in showing mode
 		if (_labelShowing) {
 
-			Tweener.addTween(_label,{
+			Tweener.addTween(_ttbox,{
 				x: x,
 				y: y,
 				time: SLIDETIME,
@@ -214,8 +228,8 @@ function _showTooltip(actor) {
 
 		} else {
 
-			_label.set_position(x, y);
-			Tweener.addTween(_label,{
+			_ttbox.set_position(x, y);
+			Tweener.addTween(_ttbox,{
 				opacity: 255,
 				time: LABELSHOWTIME,
 				transition: 'easeOutQuad',
@@ -242,14 +256,16 @@ function _showTooltip(actor) {
 
 function _hideTooltip() {
 
-	if (_label){
-		Tweener.addTween(_label, {
+	if (_ttbox){
+		Tweener.addTween(_ttbox, {
 			opacity: 0,
 			time: LABELHIDETIME,
 			transition: 'easeOutQuad',
 			onComplete: function() {
-				Main.uiGroup.remove_actor(_label);
-				_label = null;
+				_ttlabel = null;
+				_ttdetail = null;
+				Main.uiGroup.remove_actor(_ttbox);
+				_ttbox = null;
 			}
 		});
 	}
