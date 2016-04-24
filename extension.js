@@ -11,7 +11,9 @@ const Utils = extension.imports.utils;
 // options
 let LABELSHOWTIME	= 15/100;
 let LABELHIDETIME 	= 10/100;
+let SLIDETIME		= 15/100;
 let HOVERDELAY		= 300;
+let HIDEDELAY		= 500;
 let ALWAYSSHOW		= true;
 let APPDESCRIPTION	= true;
 
@@ -92,8 +94,8 @@ function _onHover(actor){
 			// we simply update it
 			let timeout = _labelShowing ? 0 : HOVERDELAY;
 			_labelTimeoutId = Mainloop.timeout_add(timeout, function() {
-					_labelShowing = true;
 					_showTooltip(actor);
+					_labelShowing = true;
 					return false;
 				} );
 
@@ -114,12 +116,10 @@ function _onHover(actor){
 			_labelTimeoutId = 0;
 		}
 
-		// hide the tooltip now (if visible)
-		_hideTooltip();
-
-		// but give a chance to skip hover delay if the cursor hovers another icon within 1sec
+		// but give a chance to skip hover delay if the cursor hovers another icon
 		if (_labelShowing) {
-			_resetHoverTimeoutId = Mainloop.timeout_add(1000,  function() {
+			_resetHoverTimeoutId = Mainloop.timeout_add(HIDEDELAY,  function() {
+					_hideTooltip();
 					_labelShowing = false;
 					return false;
 				} );
@@ -176,16 +176,26 @@ function _showTooltip(actor) {
 		let y = stageY + iconHeight + 5;
 		let x = stageX - Math.round((_label.get_width() - iconWidth)/2);
 
-		// setup animation
-		// TODO : animate tooltip moving from one icon to another ?
-		_label.opacity = 0;
-		_label.set_position(x, y);
-		Tweener.addTween(_label,{
-			opacity: 255,
-			time: LABELSHOWTIME,
-			transition: 'easeOutQuad',
-		});
+		// do not show label move if not in showing mode
+		if (_labelShowing) {
 
+			Tweener.addTween(_label,{
+				x: x,
+				y: y,
+				time: SLIDETIME,
+				transition: 'easeOutQuad',
+			});
+
+		} else {
+
+			_label.set_position(x, y);
+			Tweener.addTween(_label,{
+				opacity: 255,
+				time: LABELSHOWTIME,
+				transition: 'easeOutQuad',
+			});
+
+		}
 	}
 
 }
