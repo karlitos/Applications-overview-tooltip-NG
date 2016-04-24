@@ -28,21 +28,24 @@ let _resetHoverTimeoutId = 0;	// id of last (cancellable) timer
 let _label = null;				// actor for displaying the tooltip (or null)
 let _labelShowing = false;		// self explainatory
 
-let _settings;					// will store settings from the schema
+let _settings;
+let _settingsConnectionId;
 
 
 function init() {
+
 	// Translation init
 	String.prototype.format = Format.format;
 	Utils.initTranslations("applications-overview-tooltip");
-	// Read settings and apply them now
-	_settings = Utils.getSettings();
-	_applySettings();
+
 }
 
 
 function enable() {
 
+	// Settings access
+	_settings = Utils.getSettings();
+	_applySettings();
 	_tooltips = new Array();
 
 	// Enabling tooltips for already loaded icons
@@ -59,12 +62,19 @@ function enable() {
 		_old_addItem.apply(this, arguments);
 	};
 
+	// apply new settings if changed
+	_settingsConnectionId = _settings.connect('changed', _applySettings);
+
 }
 
 
 function disable() {
 
-	//restore the original addItem function
+	// disconnects settings
+	if (_settingsConnectionId > 0) _settings.disconnect(_settingsConnectionId);
+	_settings = null;
+
+	// restore the original addItem function
 	imports.ui.iconGrid.IconGrid.prototype.addItem = _old_addItem;
 
 	// disconnects from all loaded icons
@@ -84,6 +94,7 @@ function _applySettings() {
 	ALWAYSSHOW = _settings.get_boolean("alwaysshow") ;
 	APPDESCRIPTION = _settings.get_boolean("appdescription") ;
 	GROUPAPPCOUNT = _settings.get_boolean("groupappcount") ;
+
 }
 
 
