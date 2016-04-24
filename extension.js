@@ -107,41 +107,44 @@ function _onHover(actor){
 		// unless it's already set
 		if (_labelTimeoutId == 0) {
 
-			// if the tooltip is already show (on another icon)
-			// we simply update it
-			let timeout = _labelShowing ? 0 : HOVERDELAY;
-			_labelTimeoutId = Mainloop.timeout_add(timeout, function() {
+			// if the tooltip is already displayed (on another icon)
+			// we update it, else we delay it
+			if (_labelShowing) {
+				_showTooltip(actor);
+			} else {
+				_labelTimeoutId = Mainloop.timeout_add(HOVERDELAY, function() {
 					_showTooltip(actor);
-					_labelShowing = true;
 					return false;
 				} );
-
-			// do not hide tooltip while cursor is on icon
-			if (_resetHoverTimeoutId > 0) {
-				Mainloop.source_remove(_resetHoverTimeoutId);
-				_resetHoverTimeoutId = 0;
 			}
+
 		}
 
 	} else {
 	
 		// cursor is no more on an icon
+		_onLeave();
 
-		// unset label display timer if needed
-		if (_labelTimeoutId > 0){
-			Mainloop.source_remove(_labelTimeoutId);
-			_labelTimeoutId = 0;
-		}
+	}
 
-		// but give a chance to skip hover delay if the cursor hovers another icon
-		if (_labelShowing) {
-			_resetHoverTimeoutId = Mainloop.timeout_add(HIDEDELAY,  function() {
-					_hideTooltip();
-					_labelShowing = false;
-					return false;
-				} );
-		}
+}
 
+
+function _onLeave() {
+
+	// unset label display timer if needed
+	if (_labelTimeoutId > 0){
+		Mainloop.source_remove(_labelTimeoutId);
+		_labelTimeoutId = 0;
+	}
+
+	// but give a chance to skip hover delay if the cursor hovers another icon
+	if (_labelShowing) {
+		_resetHoverTimeoutId = Mainloop.timeout_add(HIDEDELAY,  function() {
+				_hideTooltip();
+				_labelShowing = false;
+				return false;
+			} );
 	}
 
 }
@@ -217,8 +220,21 @@ function _showTooltip(actor) {
 				time: LABELSHOWTIME,
 				transition: 'easeOutQuad',
 			});
+			_labelShowing = true;
 
 		}
+
+		// do not hide tooltip while cursor is on icon
+		if (_resetHoverTimeoutId > 0) {
+			Mainloop.source_remove(_resetHoverTimeoutId);
+			_resetHoverTimeoutId = 0;
+		}
+
+	} else {
+
+		// No tooltip to show : act like we're leaving an icon
+		_onLeave();
+
 	}
 
 }
