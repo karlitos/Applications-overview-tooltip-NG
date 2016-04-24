@@ -1,17 +1,32 @@
-Applications overview tooltip
-====================================
+# applications-overview-tooltip
+Gnome shell extension that shows a tooltip under applications icons on applications overview and search results.
 
-Gnome shell extension. Shows a tooltip over applications icons on applications overview.
+![Alt text](./screenshot.png "Here is how it looks like")
 
-Credits :
+## Features
+- Shows full text instead of cut-off/elipsized application title
+- Shows the application description in the tooltip-label (optional) from the .desktop file of the application
+- Comes in English and French
+
+## One-click install
+It's on extensions.gnome.org :
+https://extensions.gnome.org/extension/1071/applications-overview-tooltip/
+
+## Manual install
+To install, simply download as zip and unzip contents in ~/.local/share/gnome-shell/extensions/applications-overview-tooltip@RaphaelRochet
+
+## Changes
+
+### v2
+- Added translation support
+- French language
+- A few bug fixed
+- New tooltip style
+- Added slide animation between icons
+- Added group applications count (optional)
+
+## Credits
 - 2012,2013 Original author Franco Bianconi
 - 2014 Updated and upgraded by Karel Macha
 
-By default the extension shows the application-description in the tooltip-label if provided. The description is the one from the .desktop file of the application. 
 
-The tooltips are always displayed, even if the text under the icon in the app-overview is not cut-off/elipsized.
-
-Those settings and some other can be adjuset in preferences dialog in the gnome-tweakutility or extensions.gnome.org.
-
-
-![Alt text](./screenshot.png "Here is how it looks like")
