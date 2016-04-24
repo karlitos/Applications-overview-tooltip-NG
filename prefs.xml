@@ -92,7 +92,7 @@
 
 	<child>
 		<object class="GtkLabel">
-			<property name="label" translatable="yes">&lt;b&gt;Tooltip appearance&lt;/b&gt;</property>
+			<property name="label" translatable="yes">&lt;b&gt;When to show Tooltip&lt;/b&gt;</property>
 			<property name="use_markup">true</property>
 			<property name="hexpand">true</property>
 			<property name="halign">1</property>
@@ -118,6 +118,20 @@
 	</child>
 
 	<child>
+		<object class="GtkSeparator">
+		</object>
+	</child>
+
+	<child>
+		<object class="GtkLabel">
+			<property name="label" translatable="yes">&lt;b&gt;Tooltip appearance&lt;/b&gt;</property>
+			<property name="use_markup">true</property>
+			<property name="hexpand">true</property>
+			<property name="halign">1</property>
+		</object>
+	</child>
+
+	<child>
 		<object class="GtkBox">
 			<property name="spacing">5</property>
 			<child>
@@ -129,6 +143,24 @@
 			</child>
 			<child>
 				<object class="GtkSwitch" id="field_appdescription">
+					<property name="active">true</property>
+				</object>
+			</child>
+		</object>
+	</child>
+
+	<child>
+		<object class="GtkBox">
+			<property name="spacing">5</property>
+			<child>
+				<object class="GtkLabel">
+					<property name="label" translatable="yes">Show applications count on groups</property>
+					<property name="hexpand">true</property>
+					<property name="halign">1</property>
+				</object>
+			</child>
+			<child>
+				<object class="GtkSwitch" id="field_groupappcount">
 					<property name="active">true</property>
 				</object>
 			</child>

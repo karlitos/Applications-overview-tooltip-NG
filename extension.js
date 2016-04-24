@@ -16,6 +16,7 @@ let HOVERDELAY		= 300;
 let HIDEDELAY		= 500;
 let ALWAYSSHOW		= true;
 let APPDESCRIPTION	= true;
+let GROUPAPPCOUNT	= true;
 
 // private variables
 let _old_addItem = null;		// used to restore monkey patched function on disable
@@ -77,7 +78,7 @@ function _applySettings() {
 	HOVERDELAY = _settings.get_int("hoverdelay") ;
 	ALWAYSSHOW = _settings.get_boolean("alwaysshow") ;
 	APPDESCRIPTION = _settings.get_boolean("appdescription") ;
-
+	GROUPAPPCOUNT = _settings.get_boolean("groupappcount") ;
 }
 
 
@@ -142,13 +143,18 @@ function _showTooltip(actor) {
 		if (APPDESCRIPTION) {
 			let appDescription = actor._delegate.app.get_description();
 			if (appDescription){
-				icontext = icontext.concat(" :\n",appDescription);
+				icontext = icontext + " :\n" + appDescription;
 			}
 		}
 
 	} else if (actor._delegate.hasOwnProperty('_folder')){
 		// folder in the application overview
-		icontext = 'Group: '.concat(actor._delegate['name']);
+
+		icontext = actor._delegate['name'];
+		if (GROUPAPPCOUNT) {
+			let appCount = actor._delegate.view.getAllItems().length;
+			icontext = icontext + " :\nGroup of " + appCount + " applications";
+		}
 
 	} else {
 		//app and settings searchs results

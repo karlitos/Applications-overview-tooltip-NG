@@ -28,5 +28,10 @@
       <summary>Display also app description.</summary>
       <description>Shall the description of the app be displayed under the name (true/false)</description>
     </key>
+    <key name="groupappcount" type="b">
+      <default>true</default>
+      <summary>Display groups app count.</summary>
+      <description>Shall the count of the group's applications be displayed on the tooltip (true/false)</description>
+    </key>
   </schema>
 </schemalist>
