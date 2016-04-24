@@ -116,6 +116,7 @@ function _onHover(actor){
 			} else {
 				_labelTimeoutId = Mainloop.timeout_add(HOVERDELAY, function() {
 					_showTooltip(actor);
+					_labelTimeoutId = 0;
 					return false;
 				} );
 			}
@@ -145,6 +146,7 @@ function _onLeave() {
 		_resetHoverTimeoutId = Mainloop.timeout_add(HIDEDELAY,  function() {
 				_hideTooltip();
 				_labelShowing = false;
+				_resetHoverTimeoutId = 0;
 				return false;
 			} );
 	}
