@@ -6,7 +6,9 @@ const Gio = imports.gi.Gio
 const Pango = imports.gi.Pango;
 const extension = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = extension.imports.utils;
-
+const Format = imports.format;
+const Gettext = imports.gettext.domain('applications-overview-tooltip');
+const _ = Gettext.gettext;
 
 // options
 let LABELSHOWTIME	= 15/100;
@@ -30,6 +32,9 @@ let _settings;					// will store settings from the schema
 
 
 function init() {
+	// Translation init
+	String.prototype.format = Format.format;
+	Utils.initTranslations("applications-overview-tooltip");
 	// Read settings and apply them now
 	_settings = Utils.getSettings();
 	_applySettings();
@@ -153,7 +158,8 @@ function _showTooltip(actor) {
 		icontext = actor._delegate['name'];
 		if (GROUPAPPCOUNT) {
 			let appCount = actor._delegate.view.getAllItems().length;
-			icontext = icontext + " :\nGroup of " + appCount + " applications";
+			icontext = icontext + " :\n"
+				+ Gettext.ngettext( "Group of %d application", "Group of %d applications", appCount ).format(appCount);
 		}
 
 	} else {
