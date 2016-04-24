@@ -2,89 +2,38 @@
  *
  * Preferences dialog for gnome-shell-extensions-prefs tool
  */
+ 
+const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Gio = imports.gi.Gio;
-const ExtensionUtils = imports.misc.extensionUtils;
+const Lang = imports.lang;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Utils = Me.imports.utils;
 
-// get current extension
-const extension = imports.misc.extensionUtils.getCurrentExtension();
+const Gettext = imports.gettext.domain('applications-overview-tooltip');
+const _ = Gettext.gettext;
 
-// stores settings from the schema
 let settings;
 
-// settings initialization
 function init() {
-
-  const GioSSS = Gio.SettingsSchemaSource;
-
-    let schemaSource = GioSSS.new_from_directory(extension.path + "/schemas",
-            GioSSS.get_default(), false);
-
-    let schemaObj = schemaSource.lookup(extension.metadata["settings-schema"], true);
-    if(!schemaObj) {
-        throw new Error("Schema " + extension.metadata["settings-schema"] + " could not be found for extension " +
-                        extension.uuid + ". Please check your installation.");
-    }
-
-    settings = new Gio.Settings({ settings_schema: schemaObj });
+	settings = Utils.getSettings(Me);
+	Utils.initTranslations("applications-overview-tooltip");
 }
 
-// building the preferences Gui
-function buildPrefsWidget() {
-  let frame = new Gtk.Box({
-    orientation: Gtk.Orientation.VERTICAL,
-    border_width: 10
-  });
+function buildPrefsWidget(){
 
-  // add the GtkSpinButton for hoover-timeout
-  frame.add(buildSpinn("hoover-timeout", [0, 1500, 1, 10], "How long the mouse-cursor have to stay over the icon before the tooltip is displayed (in ms)"));
-  frame.add(buildSpinn("label-show-time", [0, 150, 1, 10], "Determines how fast the tooltip should be displayed."));
-  frame.add(buildSpinn("label-hide-time", [0, 150, 1, 10], "Determines how fast the tooltip should be dismissed."));
-  frame.add(buildSwitcher("allways-show-tooltips", "Always show tooltips (even if the icon-label is not elipsized)."));
-  frame.add(buildSwitcher("show-app-description", "Display also app description in the tooltip."));
+	// Prepare labels and controls
+	let buildable = new Gtk.Builder();
+	buildable.add_from_file( Me.dir.get_path() + '/prefs.xml' );
+	let box = buildable.get_object('vbox_built');
 
-  frame.show_all();
+	// Bind fields to settings
+	settings.bind('hoverdelay', buildable.get_object('field_hoverdelay'), 'value', Gio.SettingsBindFlags.DEFAULT);
+	settings.bind('labelshowtime', buildable.get_object('field_labelshowtime'), 'value', Gio.SettingsBindFlags.DEFAULT);
+	settings.bind('labelhidetime', buildable.get_object('field_labelhidetime'), 'value', Gio.SettingsBindFlags.DEFAULT);
+	settings.bind('alwaysshow', buildable.get_object('field_alwaysshow'), 'active', Gio.SettingsBindFlags.DEFAULT);
+	settings.bind('appdescription', buildable.get_object('field_appdescription'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
-  return frame;
-}
-
-// funtion creating the GtkSwitch widgets
-function buildSwitcher(key, labeltext, tooltip) {
-	let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 10 });
-
-	let label = new Gtk.Label({label: labeltext, xalign: 0 });
-
-	let switcher = new Gtk.Switch({active: settings.get_boolean(key)});
-
-	switcher.connect('notify::active', function(widget) {
-		settings.set_boolean(key, widget.active);
-	});
-
-	hbox.pack_start(label, true, true, 0);
-	hbox.add(switcher);
-
-	return hbox;
-}
-
-// funtion creating the GtkSpinButton widgets
-function buildSpinn(key, values, labeltext) {
-	let [min, max, step, page] = values;
-	let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 10 });
-
-	let label = new Gtk.Label({label: labeltext, xalign: 0 });
-
-	let spin = new Gtk.SpinButton();
-	spin.set_range(min, max);
-	spin.set_increments(step, page);
-	spin.set_value(settings.get_int(key));
-
-	spin.connect('value-changed', function(widget) {
-		settings.set_int(key, widget.get_value());
-	});
-
-	hbox.pack_start(label, true, true, 0);
-	hbox.add(spin);
-
-	return hbox;
-
-}
+	box.show_all();
+	return box;
+};

@@ -3,207 +3,214 @@ const Mainloop = imports.mainloop;
 const St = imports.gi.St;
 const Tweener = imports.ui.tweener;
 const Gio = imports.gi.Gio
-const ExtensionUtils = imports.misc.extensionUtils;
 const Pango = imports.gi.Pango;
-
-// get current extension
 const extension = imports.misc.extensionUtils.getCurrentExtension();
+const Utils = extension.imports.utils;
 
-// used to restore monkey patched function on disable
-let _old_addItem = null;
-// used to disconnect events on disable
-let _tooltips = null;
-// id of timer waiting for start
-let _labelTimeoutId = 0;
-// id of last (cancellable) timer
-let _resetHoverTimeoutId = 0;
-// actor for displaying the tooltip (or null)
-let _label = null;
-// self explainatory
-let _labelShowing = false;
 
-// stores settings from the schema
-let _settings;
+// options
+let LABELSHOWTIME	= 15/100;
+let LABELHIDETIME 	= 10/100;
+let HOVERDELAY		= 300;
+let ALWAYSSHOW		= true;
+let APPDESCRIPTION	= true;
+
+// private variables
+let _old_addItem = null;		// used to restore monkey patched function on disable
+let _tooltips = null;			// used to disconnect events on disable
+let _labelTimeoutId = 0;		// id of timer waiting for start
+let _resetHoverTimeoutId = 0;	// id of last (cancellable) timer
+let _label = null;				// actor for displaying the tooltip (or null)
+let _labelShowing = false;		// self explainatory
+
+let _settings;					// will store settings from the schema
+
+
 function init() {
-  const GioSSS = Gio.SettingsSchemaSource;
-
-  let schemaSource = GioSSS.new_from_directory(extension.path + "/schemas",
-                                               GioSSS.get_default(), false);
-
-  let schemaObj = schemaSource.lookup(extension.metadata["settings-schema"], true);
-  if(!schemaObj) {
-    throw new Error("Schema " + extension.metadata["settings-schema"] + " could not be found for extension " +
-                    extension.uuid + ". Please check your installation.");
-  }
-
-  _settings = new Gio.Settings({ settings_schema: schemaObj });
+	// Read settings and apply them now
+	_settings = Utils.getSettings();
+	_applySettings();
 }
 
-function _get_tooltip_label_show_time() { return (_settings.get_int("label-show-time")/100); }
-function _get_tooltip_label_hide_time() { return (_settings.get_int("label-hide-time")/100); }
-function _get_tooltip_hover_timeout() { return (_settings.get_int("hoover-timeout")); }
-function _get_always_show_tooltip() { return (_settings.get_boolean("allways-show-tooltips")); }
-function _get_show_app_description() { return (_settings.get_boolean("show-app-description")); }
-  
-  
+
 function enable() {
-  _tooltips = new Array();
-  // Enabling tooltips after _appIcons has been populated
-  let appIcons = Main.overview.viewSelector.appDisplay._views[1].view._items;
-  //global.log("appIcons after enable",appIcons, Object.keys(appIcons).length);
-  for (let i in appIcons) {
-    _connect(appIcons[i].actor);
-  }
-  // monkeypatching for the load time and for the search overview tooltips
-  _old_addItem = imports.ui.iconGrid.IconGrid.prototype.addItem;
-  imports.ui.iconGrid.IconGrid.prototype.addItem = function(item, index){
-    _connect(item.actor);
-    // original part of the function I'm overwriting
-    _old_addItem.apply(this, arguments);
-  };
+
+	_tooltips = new Array();
+
+	// Enabling tooltips for already loaded icons
+	let appIcons = Main.overview.viewSelector.appDisplay._views[1].view._items;
+	for (let i in appIcons) {
+		_connect(appIcons[i].actor);
+	}
+
+	// monkeypatching for future icons (includes search results app icons)
+	_old_addItem = imports.ui.iconGrid.IconGrid.prototype.addItem;
+	imports.ui.iconGrid.IconGrid.prototype.addItem = function(item, index){
+		_connect(item.actor);
+		// original part of the function I'm overwriting
+		_old_addItem.apply(this, arguments);
+	};
+
 }
+
 
 function disable() {
-  //restore the function
-  imports.ui.iconGrid.IconGrid.prototype.addItem = _old_addItem;
-  for (let i = 0; i < _tooltips.length; i++) {
-    //disconnect hover signals
-    _tooltips[i].actor.disconnect(_tooltips[i].connection);
-  }
-  _tooltips=null;
+
+	//restore the original addItem function
+	imports.ui.iconGrid.IconGrid.prototype.addItem = _old_addItem;
+
+	// disconnects from all loaded icons
+	for (let i = 0; i < _tooltips.length; i++) {
+		_tooltips[i].actor.disconnect(_tooltips[i].connection);
+	}
+	_tooltips=null;
+
 }
+
+
+function _applySettings() {
+
+	LABELSHOWTIME = _settings.get_int("labelshowtime")/100 ;
+	LABELHIDETIME = _settings.get_int("labelhidetime")/100 ;
+	HOVERDELAY = _settings.get_int("hoverdelay") ;
+	ALWAYSSHOW = _settings.get_boolean("alwaysshow") ;
+	APPDESCRIPTION = _settings.get_boolean("appdescription") ;
+
+}
+
 
 function _onHover(actor){
-  if (actor.get_hover()) {
-    if (_labelTimeoutId == 0) {
-      let timeout = _labelShowing ? 0 : _get_tooltip_hover_timeout();
-      _labelTimeoutId = Mainloop.timeout_add(timeout,
-                                             function() {
-                                               _labelShowing = true;
-                                               _showTooltip(actor);
-                                               return false;
-                                             }
-                                            );
-      if (_resetHoverTimeoutId > 0) {
-        Mainloop.source_remove(_resetHoverTimeoutId);
-        _resetHoverTimeoutId = 0;
-      }
-    }
-  } else {
-    if (_labelTimeoutId > 0){
-      Mainloop.source_remove(_labelTimeoutId);
-    }
-    _labelTimeoutId = 0;
-    _hideTooltip();
-    if (_labelShowing) {
-      _resetHoverTimeoutId = Mainloop.timeout_add(_get_tooltip_hover_timeout(),
-                                                  function() {
-                                                    _labelShowing = false;
-                                                    return false;
-                                                  }
-                                                 );
-    }
-  }
+
+	// checks if cursor is over the icon
+	if (actor.get_hover()) {
+	
+		// it is : let's setup a toolip display
+		// unless it's already set
+		if (_labelTimeoutId == 0) {
+
+			// if the tooltip is already show (on another icon)
+			// we simply update it
+			let timeout = _labelShowing ? 0 : HOVERDELAY;
+			_labelTimeoutId = Mainloop.timeout_add(timeout, function() {
+					_labelShowing = true;
+					_showTooltip(actor);
+					return false;
+				} );
+
+			// do not hide tooltip while cursor is on icon
+			if (_resetHoverTimeoutId > 0) {
+				Mainloop.source_remove(_resetHoverTimeoutId);
+				_resetHoverTimeoutId = 0;
+			}
+		}
+
+	} else {
+	
+		// cursor is no more on an icon
+
+		// unset label display timer if needed
+		if (_labelTimeoutId > 0){
+			Mainloop.source_remove(_labelTimeoutId);
+			_labelTimeoutId = 0;
+		}
+
+		// hide the tooltip now (if visible)
+		_hideTooltip();
+
+		// but give a chance to skip hover delay if the cursor hovers another icon within 1sec
+		if (_labelShowing) {
+			_resetHoverTimeoutId = Mainloop.timeout_add(1000,  function() {
+					_labelShowing = false;
+					return false;
+				} );
+		}
+
+	}
+
 }
+
 
 function _showTooltip(actor) {
-  let icontext = '';
-  let should_display = false;
-  if (actor._delegate.app){
-    //applications overview
-    icontext = actor._delegate.app.get_name();
-    if (_get_show_app_description()) {
-      let appDescription = actor._delegate.app.get_description();
-      // allow only valid description-text (not null)
-      if (appDescription){
-        icontext = icontext.concat(" :\n",appDescription);
-      }
-    }
-    if (!_get_always_show_tooltip()){
-      // will be displayed if elipsized/text cut-off (is_ellipsized)
-      should_display = actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
-    } else {
-      // show always
-      should_display = true;
-    }
-  }/*else if (actor._delegate._content._delegate){
-        //app and settings searchs results
-        icontext = actor._delegate.metaInfo['name'];
-        should_display = actor._delegate._content._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
-    }else if (actor._delegate._content.label_actor){
-        //locations and other (generic) search results (wanda wouldn't work)
-        icontext = actor._delegate.metaInfo['name'];
-        should_display = actor._delegate._content.label_actor.get_clutter_text().get_layout().is_ellipsized();
-    }*/
-  else if (actor._delegate.hasOwnProperty('_folder')){
-    // folder in the application overview
-    icontext = 'Group: '.concat(actor._delegate['name']);
-    if (!_get_always_show_tooltip()){
-      // will be displayed if elipsized/text cut-off (is_ellipsized)
-      should_display = actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
-    } else {
-      // show always
-      should_display = true;
-    }
-  }else{
-    //app and settings searchs results
-    icontext = actor._delegate.metaInfo['name'];
-    if (!_get_always_show_tooltip()){
-      // will be displayed if elipsized/text cut-off (is_ellipsized)
-      should_display = actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
-    } else {
-      // show always
-      should_display = true;
-    }
-  }
 
-  if (!should_display){
-    return;
-  }
+	let icontext = '';
+	let should_display = false;
 
-  if (!_label) {
-    _label = new St.Label({
-      style_class: 'app-tooltip',//'tooltip dash-label',
-      text: icontext
-    });
-    Main.uiGroup.add_actor(_label);
-  }else{
-    _label.text = icontext;
-  }
+	if (actor._delegate.app){
+		//applications overview
+		icontext = actor._delegate.app.get_name();
 
-  _label.clutter_text.line_wrap = true;
-  _label.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
-  _label.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+		if (APPDESCRIPTION) {
+			let appDescription = actor._delegate.app.get_description();
+			if (appDescription){
+				icontext = icontext.concat(" :\n",appDescription);
+			}
+		}
 
-  [stageX, stageY] = actor.get_transformed_position();
-  [iconWidth, iconHeight] = actor.get_transformed_size();
+	} else if (actor._delegate.hasOwnProperty('_folder')){
+		// folder in the application overview
+		icontext = 'Group: '.concat(actor._delegate['name']);
 
-  let y = stageY + iconHeight + 5;
-  let x = stageX - Math.round((_label.get_width() - iconWidth)/2);
-  _label.opacity = 0;
-  _label.set_position(x, y);
-  Tweener.addTween(_label,{
-    opacity: 255,
-    time: _get_tooltip_label_show_time(),
-    transition: 'easeOutQuad',
-  });
+	} else {
+		//app and settings searchs results
+		icontext = actor._delegate.metaInfo['name'];
+
+	}
+
+	// If there's something to show ..
+	if ( icontext && ( ALWAYSSHOW || actor._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized() ) ){
+
+		// Create a new tooltip if needed
+		if (!_label) {
+			_label = new St.Label({ style_class: 'app-tooltip', text: icontext });
+			Main.uiGroup.add_actor(_label);
+		} else {
+			_label.text = icontext;
+		}
+
+		_label.clutter_text.line_wrap = true;
+		_label.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
+		_label.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+
+		[stageX, stageY] = actor.get_transformed_position();
+		[iconWidth, iconHeight] = actor.get_transformed_size();
+		let y = stageY + iconHeight + 5;
+		let x = stageX - Math.round((_label.get_width() - iconWidth)/2);
+
+		// setup animation
+		// TODO : animate tooltip moving from one icon to another ?
+		_label.opacity = 0;
+		_label.set_position(x, y);
+		Tweener.addTween(_label,{
+			opacity: 255,
+			time: LABELSHOWTIME,
+			transition: 'easeOutQuad',
+		});
+
+	}
+
 }
+
 
 function _hideTooltip() {
-  if (_label){
-    Tweener.addTween(_label, {
-      opacity: 0,
-      time: _get_tooltip_label_hide_time(),
-      transition: 'easeOutQuad',
-      onComplete: function() {
-        Main.uiGroup.remove_actor(_label);
-        _label = null;
-      }
-    });
-  }
+
+	if (_label){
+		Tweener.addTween(_label, {
+			opacity: 0,
+			time: LABELHIDETIME,
+			transition: 'easeOutQuad',
+			onComplete: function() {
+				Main.uiGroup.remove_actor(_label);
+				_label = null;
+			}
+		});
+	}
+
 }
 
+
 function _connect(actr){
-  let con = actr.connect('notify::hover', _onHover);
-  _tooltips.push({actor: actr, connection: con});
+
+	let con = actr.connect('notify::hover', _onHover);
+	_tooltips.push({actor: actr, connection: con});
+
 }
