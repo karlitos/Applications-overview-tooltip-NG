@@ -211,7 +211,7 @@ function _showTooltip(actor) {
 			_ttdetail.text = detailtext;
 		}
 
-		if (!detailtext) _ttdetail.hide();
+		if (!detailtext) { _ttdetail.hide() } else { _ttdetail.show() };
 
 		[stageX, stageY] = actor.get_transformed_position();
 		[iconWidth, iconHeight] = actor.get_transformed_size();
