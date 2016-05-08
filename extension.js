@@ -26,6 +26,7 @@ let _tooltips = null;			// used to disconnect events on disable
 let _labelTimeoutId = 0;		// id of timer waiting for start
 let _resetHoverTimeoutId = 0;	// id of last (cancellable) timer
 let _ttbox = null;				// actor for displaying the tooltip
+let _ttlayout = null;
 let _ttlabel = null;			// tooltip label
 let _ttdetail = null;			// tooltip description label
 let _labelShowing = false;		// self explainatory
@@ -191,11 +192,13 @@ function _showTooltip(actor) {
 
 		// Create a new tooltip if needed
 		if (!_ttbox) {
-			_ttbox = new St.BoxLayout({ vertical: true, style_class: 'app-tooltip' });
+			_ttbox = new St.Bin({ style_class: 'app-tooltip' });
+			_ttlayout = new St.BoxLayout({ vertical: true });
 			_ttlabel = new St.Label({ style_class: 'app-tooltip-title', text: icontext });
 			_ttdetail = new St.Label({ style_class: 'app-tooltip-detail', text: detailtext });
-			_ttbox.add_child(_ttlabel);
-			_ttbox.add_child(_ttdetail);
+			_ttlayout.add_child(_ttlabel);
+			_ttlayout.add_child(_ttdetail);
+			_ttbox.add_actor(_ttlayout);
 			
 			// we force text wrap on both labels
 			_ttlabel.clutter_text.line_wrap = true;
