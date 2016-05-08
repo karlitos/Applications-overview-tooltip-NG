@@ -17,6 +17,10 @@ To install, simply download as zip and unzip contents in ~/.local/share/gnome-sh
 
 ## Changes
 
+### v3
+- New option to draw borders
+- Minor fixes
+
 ### v2
 - Added translation support
 - French language
