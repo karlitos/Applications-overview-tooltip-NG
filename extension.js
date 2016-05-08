@@ -19,6 +19,7 @@ let HIDEDELAY		= 500;
 let ALWAYSSHOW		= true;
 let APPDESCRIPTION	= true;
 let GROUPAPPCOUNT	= true;
+let BORDERS			= false;
 
 // private variables
 let _old_addItem = null;		// used to restore monkey patched function on disable
@@ -97,6 +98,7 @@ function _applySettings() {
 	ALWAYSSHOW = _settings.get_boolean("alwaysshow") ;
 	APPDESCRIPTION = _settings.get_boolean("appdescription") ;
 	GROUPAPPCOUNT = _settings.get_boolean("groupappcount") ;
+	BORDERS = _settings.get_boolean("borders");
 
 }
 
@@ -192,7 +194,8 @@ function _showTooltip(actor) {
 
 		// Create a new tooltip if needed
 		if (!_ttbox) {
-			_ttbox = new St.Bin({ style_class: 'app-tooltip' });
+			let css_class = BORDERS ? 'app-tooltip-borders' : 'app-tooltip';
+			_ttbox = new St.Bin({ style_class: css_class });
 			_ttlayout = new St.BoxLayout({ vertical: true });
 			_ttlabel = new St.Label({ style_class: 'app-tooltip-title', text: icontext });
 			_ttdetail = new St.Label({ style_class: 'app-tooltip-detail', text: detailtext });

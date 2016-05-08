@@ -33,5 +33,10 @@
       <summary>Display groups app count.</summary>
       <description>Shall the count of the group's applications be displayed on the tooltip (true/false)</description>
     </key>
+    <key name="borders" type="b">
+      <default>false</default>
+      <summary>Display a border.</summary>
+      <description>(true/false)</description>
+    </key>
   </schema>
 </schemalist>

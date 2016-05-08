@@ -34,6 +34,7 @@ function buildPrefsWidget(){
 	settings.bind('alwaysshow', buildable.get_object('field_alwaysshow'), 'active', Gio.SettingsBindFlags.DEFAULT);
 	settings.bind('appdescription', buildable.get_object('field_appdescription'), 'active', Gio.SettingsBindFlags.DEFAULT);
 	settings.bind('groupappcount', buildable.get_object('field_groupappcount'), 'active', Gio.SettingsBindFlags.DEFAULT);
+	settings.bind('borders', buildable.get_object('field_borders'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
 	box.show_all();
 	return box;

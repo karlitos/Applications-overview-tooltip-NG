@@ -1,9 +1,13 @@
-.app-tooltip {
+.app-tooltip, .app-tooltip-borders {
     color: #ffffff;
-    background-color: rgba(10,10,10,0.6);
+    background-color: rgba(10,10,10,0.8);
     border-radius: 5px;
     padding: 5px;
     max-width: 300px;
+}
+
+.app-tooltip-borders {
+    border: 2px solid rgba(255,255,255,0.8);
 }
 
 .app-tooltip-title {

@@ -136,6 +136,24 @@
 			<property name="spacing">5</property>
 			<child>
 				<object class="GtkLabel">
+					<property name="label" translatable="yes">Draw borders</property>
+					<property name="hexpand">true</property>
+					<property name="halign">1</property>
+				</object>
+			</child>
+			<child>
+				<object class="GtkSwitch" id="field_borders">
+					<property name="active">false</property>
+				</object>
+			</child>
+		</object>
+	</child>
+
+	<child>
+		<object class="GtkBox">
+			<property name="spacing">5</property>
+			<child>
+				<object class="GtkLabel">
 					<property name="label" translatable="yes">Display app description in the tooltip</property>
 					<property name="hexpand">true</property>
 					<property name="halign">1</property>
