@@ -80,7 +80,8 @@ function disable() {
 
 	// disconnects from all loaded icons
 	for (let i = 0; i < _tooltips.length; i++) {
-		_tooltips[i].actor.disconnect(_tooltips[i].connection);
+		_tooltips[i].actor.disconnect(_tooltips[i].con_d);
+		_tooltips[i].actor.disconnect(_tooltips[i].con_h);
 	}
 	_tooltips=null;
 
@@ -117,8 +118,18 @@ function _connectAll(view) {
 
 function _connect(actor) {
 
-	let con = actor.connect('notify::hover', _onHover);
-	_tooltips.push({'actor': actor, 'connection': con});
+	let con_h = actor.connect('notify::hover', _onHover);
+	let con_d = actor.connect('destroy', _onDestroy);
+	_tooltips.push({'actor': actor, 'con_h': con_h, 'con_d': con_d});
+
+}
+
+
+function _onDestroy(actor){
+
+	// This AppIcon is being destroy, let's forget about it
+	// so we don't try to disconnect from it later
+	_tooltips = _tooltips.filter( (item) => (item.actor !== actor) );
 
 }
 
