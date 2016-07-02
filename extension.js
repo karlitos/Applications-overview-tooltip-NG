@@ -52,11 +52,8 @@ function enable() {
 	_applySettings();
 	_tooltips = new Array();
 
-	// Enabling tooltips for already loaded icons
-	let appIcons = Main.overview.viewSelector.appDisplay._views[1].view._items;
-	for (let i in appIcons) {
-		_connect(appIcons[i].actor);
-	}
+	// Enabling tooltips for already loaded icons in "All" view including folders
+	_connectAll(Main.overview.viewSelector.appDisplay._views[1].view);
 
 	// monkeypatching for future icons (includes search results app icons)
 	_old_addItem = imports.ui.iconGrid.IconGrid.prototype.addItem;
@@ -99,6 +96,29 @@ function _applySettings() {
 	APPDESCRIPTION = _settings.get_boolean("appdescription") ;
 	GROUPAPPCOUNT = _settings.get_boolean("groupappcount") ;
 	BORDERS = _settings.get_boolean("borders");
+
+}
+
+
+function _connectAll(view) {
+
+	let appIcons = view._items;
+	for (let i in appIcons) {
+		let icon = appIcons[i];
+		let actor = icon.actor;
+		if (actor._delegate.hasOwnProperty('_folder')) {
+			_connectAll(icon.view)
+		}
+		_connect(actor);
+	}
+
+}
+
+
+function _connect(actor) {
+
+	let con = actor.connect('notify::hover', _onHover);
+	_tooltips.push({'actor': actor, 'connection': con});
 
 }
 
@@ -277,13 +297,5 @@ function _hideTooltip() {
 			}
 		});
 	}
-
-}
-
-
-function _connect(actr){
-
-	let con = actr.connect('notify::hover', _onHover);
-	_tooltips.push({actor: actr, connection: con});
 
 }
