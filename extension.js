@@ -250,8 +250,8 @@ function _showTooltip(actor) {
 
 		if (!detailtext) { _ttdetail.hide() } else { _ttdetail.show() };
 
-		[stageX, stageY] = actor.get_transformed_position();
-		[iconWidth, iconHeight] = actor.get_transformed_size();
+		let [stageX, stageY] = actor.get_transformed_position();
+		let [iconWidth, iconHeight] = actor.get_transformed_size();
 		let y = stageY + iconHeight + 5;
 		let x = stageX - Math.round((_ttbox.get_width() - iconWidth)/2);
 
