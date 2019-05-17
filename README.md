@@ -17,6 +17,11 @@ To install, simply download as zip and unzip contents in ~/.local/share/gnome-sh
 
 ## Changes
 
+### v5
+- Remove swipe animation
+- Fix tooltip not showing up sometimes
+- Minor fixes
+
 ### v4
 - Added german language (thanks Nikolai Neff)
 - 'No tooltip in groups' bug fix

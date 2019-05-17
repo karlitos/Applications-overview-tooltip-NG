@@ -2,11 +2,13 @@
   "description": "Shows a tooltip over applications icons on applications overview with complete application name and description.",
   "name": "Applications Overview Tooltip",
   "shell-version": [
+    "3.32",
+    "3.30",
     "3.20"
   ],
   "settings-schema": "org.gnome.shell.extensions.applications-overview-tooltip",
   "gettext-domain": "applications-overview-tooltip",
   "url": "https://github.com/RaphaelRochet/applications-overview-tooltip",
   "uuid": "applications-overview-tooltip@RaphaelRochet",
-  "version": 4
+  "version": 5
 }
