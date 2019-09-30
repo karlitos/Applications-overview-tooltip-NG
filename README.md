@@ -17,6 +17,9 @@ To install, simply download as zip and unzip contents in ~/.local/share/gnome-sh
 
 ## Changes
 
+### v6
+- Gnome 3.34
+
 ### v5
 - Remove swipe animation
 - Fix tooltip not showing up sometimes
