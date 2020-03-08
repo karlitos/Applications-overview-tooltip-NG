@@ -17,6 +17,10 @@ To install, simply download as zip and unzip contents in ~/.local/share/gnome-sh
 
 ## Changes
 
+### v7
+- Gnome 3.36
+- Updated translations
+
 ### v6
 - Gnome 3.34
 

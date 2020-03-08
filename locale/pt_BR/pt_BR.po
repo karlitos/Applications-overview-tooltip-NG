@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-23 12:04-0300\n"
+"POT-Creation-Date: 2016-05-09 00:19+0200\n"
 "PO-Revision-Date: 2019-12-23 12:55-0300\n"
+"Last-Translator: Fábio Nogueira <fnogueira@gnome.org>\n"
 "Language-Team: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.4\n"
-"Last-Translator: Fábio Nogueira <fnogueira@gnome.org>\n"
-"Language: pt_BR\n"
 
 #: extension.js:183
 #, javascript-format
@@ -31,7 +31,8 @@ msgstr "<b>Temporizadores</b>"
 
 #: prefs.xml:39
 msgid "Hover time before the tooltip is displayed (in ms)"
-msgstr "Tempo do mouse sobre o ícone antes da dica de ferramenta seja exibida (em ms)"
+msgstr ""
+"Tempo do mouse sobre o ícone antes da dica de ferramenta seja exibida (em ms)"
 
 #: prefs.xml:57
 msgid "Tooltip display animation duration (in ms)"
@@ -47,7 +48,9 @@ msgstr "<b>Ao exibir a dica de ferramenta</b>"
 
 #: prefs.xml:107
 msgid "Show tooltips even if the icon-label is not elipsized"
-msgstr "Mostrar dicas de ferramentas, mesmo que o rótulo do ícone não esteja reticulado"
+msgstr ""
+"Mostrar dicas de ferramentas, mesmo que o rótulo do ícone não esteja "
+"reticulado"
 
 #: prefs.xml:127
 msgid "<b>Tooltip appearance</b>"
