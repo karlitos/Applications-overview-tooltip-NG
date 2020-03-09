@@ -58,7 +58,7 @@ function enable() {
 	// monkeypatching for future icons (includes search results app icons)
 	_old_addItem = imports.ui.iconGrid.IconGrid.prototype.addItem;
 	imports.ui.iconGrid.IconGrid.prototype.addItem = function(item, index){
-		_connect(item.actor);
+		_connect(item);
 		// original part of the function I'm overwriting
 		_old_addItem.apply(this, arguments);
 	};
