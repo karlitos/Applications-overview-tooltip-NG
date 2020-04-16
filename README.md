@@ -17,6 +17,9 @@ To install, simply download as zip and unzip contents in ~/.local/share/gnome-sh
 
 ## Changes
 
+### v8
+- Fixed no tooltip in "Favorites" or after suspend
+
 ### v7
 - Gnome 3.36
 - Updated translations
