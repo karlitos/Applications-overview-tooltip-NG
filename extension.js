@@ -52,6 +52,9 @@ function enable() {
 	_applySettings();
 	_tooltips = new Array();
 
+	// Enabling tooltips for already loaded icons in "Recent" view including folders
+	_connectAll(Main.overview.viewSelector.appDisplay._views[0].view);
+
 	// Enabling tooltips for already loaded icons in "All" view including folders
 	_connectAll(Main.overview.viewSelector.appDisplay._views[1].view);
 
@@ -103,7 +106,7 @@ function _applySettings() {
 
 function _connectAll(view) {
 
-	let appIcons = view._items;
+	let appIcons = view._orderedItems;
 	for (let i in appIcons) {
 		let icon = appIcons[i];
 		let actor = icon.actor;
